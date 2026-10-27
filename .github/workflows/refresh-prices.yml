@@ -1,0 +1,33 @@
+name: Refresh prices
+
+# Weekly TCGplayer market prices via Limitless. Updates cards.price_usd / price_date and
+# price_history only; owned and paid records live in tables this job never touches.
+on:
+  schedule:
+    - cron: '17 13 * * 1' # Mondays 13:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Without the secrets this is a dry run that only reports price changes.
+      - run: npm run prices
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: prices
+          path: scripts/output/prices-*.json
+          retention-days: 90
