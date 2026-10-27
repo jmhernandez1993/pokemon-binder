@@ -15,24 +15,16 @@ Without Supabase keys the app runs in **"This device only"** mode: owned cards a
 
 GitHub Pages, deployed by `.github/workflows/deploy.yml` on every push to `main`.
 
-## Turn on sync (Supabase)
+## Sync (Supabase)
 
-1. Create a free project at supabase.com.
-2. SQL editor → paste and run `supabase/schema.sql`.
-3. In the GitHub repo → Settings → Secrets and variables → Actions, add:
-   - `SUPABASE_URL`: Project Settings → API → Project URL
-   - `SUPABASE_ANON_KEY`: the `anon` / publishable key (it goes into the site; that's expected)
-   - `SUPABASE_SERVICE_ROLE_KEY`: the `service_role` / secret key (used only by the Actions jobs, never in the site)
-4. Actions → "Seed Supabase catalog" → Run workflow. Then Actions → "Deploy to GitHub Pages" → Run workflow.
-5. Supabase → Authentication:
-   - URL Configuration: set Site URL to the GitHub Pages address.
-   - Email templates → "Magic Link": add `{{ .Token }}` so the email includes a 6-digit code.
-     (iPhone home-screen apps can't receive magic links, but the code works.)
-6. Sign in once on each device. Then turn off "Allow new users to sign up" (Authentication → Providers → Email).
+Project **PokeBinder** (us-west-2). The GitHub repo secrets `SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are set. The site gets the URL and anon key at build time; only the Actions jobs use the service key.
 
-On first sign-in the app copies your owned cards into Supabase. It uses that device's "This device only" records if it has any, otherwise the catalog export. That step is insert-only, so it never overwrites anything already there.
+- Tables: `supabase/schema.sql` (safe to re-run).
+- Catalog: loaded once by the "Seed Supabase catalog" workflow (insert-only).
+- Sign-in: email + password. The free tier can't customise email templates, so emailed codes aren't possible, and magic links open in Safari instead of the home-screen app. Email confirmation is off. New sign-ups are turned off once the owner's account exists.
+- First sign-in copies owned cards into Supabase, using the device's "This device only" records if it has any, otherwise the catalog export. That step is insert-only, so it never overwrites anything already there.
 
-For local development with sync, copy `.env.example` to `.env.local` and add the URL and anon key.
+For local development with sync, `.env.local` (gitignored) holds the URL and anon key.
 
 ## Prices
 
