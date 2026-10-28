@@ -51,6 +51,7 @@
    "dex": 4,
    "name": "Charmander",
    "option_ids": [
+    "MEP-38",
     "SV2a-168",
     "SVP-044",
     "MEW-168"
@@ -251,7 +252,9 @@
   {
    "dex": 30,
    "name": "Nidorina",
-   "option_ids": []
+   "option_ids": [
+    "MEP-101"
+   ]
   },
   {
    "dex": 31,
@@ -1371,6 +1374,26 @@
    "pickable": false
   },
   {
+   "id": "MEP-38",
+   "dex": 4,
+   "pokemon": "Charmander",
+   "card": "Charmander",
+   "set_name": "Mega Promos",
+   "set_code": "MEP",
+   "number": "38",
+   "tier": "Promo-IR",
+   "language": "EN",
+   "price_usd": 26.74,
+   "price_source": "TCGplayer market via Limitless",
+   "price_date": "2026-10-27",
+   "tcgplayer_url": "https://www.tcgplayer.com/product/684462/pokemon-me-mega-evolution-promo-charmander-038",
+   "tcgplayer_product_id": 684462,
+   "limitless_url": "https://limitlesstcg.com/cards/en/MEP/38",
+   "owned": false,
+   "paid_usd": null,
+   "pickable": true
+  },
+  {
    "id": "MEW-169",
    "dex": 5,
    "pokemon": "Charmeleon",
@@ -2407,6 +2430,26 @@
    "tcgplayer_product_id": 497614,
    "limitless_url": "https://limitlesstcg.com/cards/en/PAL/211",
    "owned": false,
+   "paid_usd": null,
+   "pickable": true
+  },
+  {
+   "id": "MEP-101",
+   "dex": 30,
+   "pokemon": "Nidorina",
+   "card": "Nidorina",
+   "set_name": "Mega Promos",
+   "set_code": "MEP",
+   "number": "101",
+   "tier": "Promo-IR",
+   "language": "EN",
+   "price_usd": 1.39,
+   "price_source": "TCGplayer market via Limitless",
+   "price_date": "2026-10-27",
+   "tcgplayer_url": "https://www.tcgplayer.com/product/713260/pokemon-me-mega-evolution-promo-nidorina-101-30th-celebration",
+   "tcgplayer_product_id": 713260,
+   "limitless_url": "https://limitlesstcg.com/cards/en/MEP/101",
+   "owned": true,
    "paid_usd": null,
    "pickable": true
   },
