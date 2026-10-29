@@ -11,6 +11,16 @@ npm run dev          # http://localhost:5173
 
 Without Supabase keys the app runs in **"This device only"** mode: owned cards and paid amounts are saved in the browser, starting from the catalog export (32/82).
 
+## Budget planner
+
+The cart button in the header. Enter an amount and it lists the missing cards to buy, one per slot, using each slot's cheapest English option that passes the filters (no regional forms / no Full Arts / no gallery). Logic is in `src/planner.ts`:
+
+- **Most cards**: cheapest first until the next one doesn't fit, which is the maximum number of slots for that budget.
+- **No gallery**: the same, skipping Trainer/Galarian Gallery cards (shown only when that filter is off and the cart differs).
+- **Big tickets**: priciest card that still fits, repeated, so fewer cards but more expensive slots filled.
+
+Each cart shows what's left over and the next card it can't afford. "Mark all as bought" flips the cart to owned in one write (paid amounts stay blank) and offers Undo.
+
 ## Hosting
 
 GitHub Pages, deployed by `.github/workflows/deploy.yml` on every push to `main`.

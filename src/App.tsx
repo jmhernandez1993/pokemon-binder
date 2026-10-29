@@ -8,6 +8,7 @@ import { Binder } from './components/Binder'
 import { Pager } from './components/Pager'
 import { DetailSheet } from './components/DetailSheet'
 import { JumpTo } from './components/JumpTo'
+import { Planner } from './components/Planner'
 import { SignIn } from './components/SignIn'
 
 export default function App() {
@@ -41,7 +42,7 @@ const savedPage = () => {
 }
 
 function BinderApp({ backend }: { backend: Backend }) {
-  const { own, prices, status, error, dismissError, setOwned, setPaid, setPick } = useCollection(backend)
+  const { own, prices, status, error, dismissError, setOwned, setOwnedMany, setPaid, setPick } = useCollection(backend)
   const cards = useMemo(() => withPrices(prices), [prices])
   const slots = useMemo(() => buildSlots(cards, own), [cards, own])
   const stats = useMemo(() => computeStats(slots, cards, own), [slots, cards, own])
@@ -50,6 +51,7 @@ function BinderApp({ backend }: { backend: Backend }) {
   const [target, setTarget] = useState({ page, seq: 0, smooth: false })
   const [openDex, setOpenDex] = useState<number | null>(null)
   const [jumpOpen, setJumpOpen] = useState(false)
+  const [planOpen, setPlanOpen] = useState(false)
   const [flashDex, setFlashDex] = useState<number | null>(null)
 
   useEffect(() => {
@@ -69,7 +71,7 @@ function BinderApp({ backend }: { backend: Backend }) {
   // Arrow keys page through the binder on the Mac.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (openDex != null || jumpOpen || (e.target as HTMLElement).closest('input, textarea')) return
+      if (openDex != null || jumpOpen || planOpen || (e.target as HTMLElement).closest('input, textarea')) return
       if (e.key === 'ArrowRight') goTo(page + 1)
       if (e.key === 'ArrowLeft') goTo(page - 1)
       if (e.key === '/') {
@@ -89,7 +91,7 @@ function BinderApp({ backend }: { backend: Backend }) {
 
   return (
     <div className="app">
-      <ProgressHeader stats={stats} status={status} localOnly={backend.kind === 'local'} onSearch={() => setJumpOpen(true)} />
+      <ProgressHeader stats={stats} status={status} localOnly={backend.kind === 'local'} onSearch={() => setJumpOpen(true)} onPlan={() => setPlanOpen(true)} />
       {error && (
         <div className="toast" role="alert">
           {error}
@@ -109,6 +111,7 @@ function BinderApp({ backend }: { backend: Backend }) {
         onPick={setPick}
       />
       <JumpTo open={jumpOpen} slots={slots} onClose={() => setJumpOpen(false)} onPick={jumpTo} />
+      <Planner open={planOpen} slots={slots} onClose={() => setPlanOpen(false)} onSetOwned={setOwnedMany} />
     </div>
   )
 }

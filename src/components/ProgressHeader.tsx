@@ -6,6 +6,7 @@ interface Props {
   status: SyncStatus
   localOnly: boolean
   onSearch: () => void
+  onPlan: () => void
 }
 
 const statusText: Record<SyncStatus, string> = {
@@ -16,7 +17,7 @@ const statusText: Record<SyncStatus, string> = {
   error: 'Sync error',
 }
 
-export function ProgressHeader({ stats, status, localOnly, onSearch }: Props) {
+export function ProgressHeader({ stats, status, localOnly, onSearch, onPlan }: Props) {
   const pct = stats.slotsWithCard ? stats.collected / stats.slotsWithCard : 0
   const pctAll = stats.collected / stats.slotsTotal
   const complete = stats.ownedValue + stats.costToComplete
@@ -28,6 +29,20 @@ export function ProgressHeader({ stats, status, localOnly, onSearch }: Props) {
         <span className={`sync sync-${localOnly ? 'local' : status}`} title={localOnly ? 'Saved on this device only' : statusText[status]}>
           {localOnly ? 'This device only' : statusText[status]}
         </span>
+        <button className="icon-btn" onClick={onPlan} aria-label="Budget planner">
+          <svg viewBox="0 0 24 24" width="21" height="21" aria-hidden="true">
+            <path
+              d="M2.5 3.5h2.6l2.3 11a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.1L21 7.5H6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="9.5" cy="20" r="1.5" fill="currentColor" />
+            <circle cx="17.5" cy="20" r="1.5" fill="currentColor" />
+          </svg>
+        </button>
         <button className="icon-btn" onClick={onSearch} aria-label="Jump to a Pokémon">
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
             <circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" strokeWidth="2" />

@@ -48,9 +48,9 @@ export function useCollection(backend: Backend) {
     if (backend.kind === 'supabase' && status === 'synced') writeCache({ own, prices })
   }, [backend, own, prices, status])
 
-  /** Apply locally first, then persist; roll back if the save fails. */
+  /** Apply locally first, then persist; roll back if the save fails. Resolves to whether it saved. */
   const mutate = useCallback(
-    async (apply: (o: Ownership) => Ownership, save: () => Promise<void>) => {
+    async (apply: (o: Ownership) => Ownership, save: () => Promise<void>): Promise<boolean> => {
       const before = ownRef.current
       const next = apply(before)
       ownRef.current = next
@@ -61,11 +61,13 @@ export function useCollection(backend: Backend) {
         await save()
         setStatus('synced')
         setError(null)
+        return true
       } catch (e) {
         ownRef.current = before
         setOwn(before)
         setStatus('error')
         setError(`Couldn't save: ${e instanceof Error ? e.message : String(e)}`)
+        return false
       } finally {
         pending.current--
       }
@@ -82,6 +84,19 @@ export function useCollection(backend: Backend) {
         return { ...o, owned: next }
       },
       () => backend.setOwned(id, owned),
+    )
+
+  const setOwnedMany = (ids: string[], owned: boolean) =>
+    mutate(
+      (o) => {
+        const next = { ...o.owned }
+        for (const id of ids) {
+          if (owned) next[id] = true
+          else delete next[id]
+        }
+        return { ...o, owned: next }
+      },
+      () => backend.setOwnedMany(ids, owned),
     )
 
   const setPaid = (id: string, paid: number | null) =>
@@ -106,5 +121,5 @@ export function useCollection(backend: Backend) {
       () => backend.setPick(dex, id),
     )
 
-  return { own, prices, status, error, dismissError: () => setError(null), setOwned, setPaid, setPick }
+  return { own, prices, status, error, dismissError: () => setError(null), setOwned, setOwnedMany, setPaid, setPick }
 }

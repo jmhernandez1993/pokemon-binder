@@ -11,6 +11,7 @@ export interface Backend {
   kind: 'supabase' | 'local'
   load(): Promise<{ own: Ownership; prices: Prices | null }>
   setOwned(cardId: string, owned: boolean): Promise<void>
+  setOwnedMany(cardIds: string[], owned: boolean): Promise<void>
   setPaid(cardId: string, paid: number | null): Promise<void>
   setPick(dex: number, cardId: string | null): Promise<void>
 }
@@ -60,6 +61,14 @@ export function localBackend(): Backend {
       update((o) => {
         if (owned) o.owned[id] = true
         else delete o.owned[id]
+      })
+    },
+    async setOwnedMany(ids, owned) {
+      update((o) => {
+        for (const id of ids) {
+          if (owned) o.owned[id] = true
+          else delete o.owned[id]
+        }
       })
     },
     async setPaid(id, paid) {
@@ -134,6 +143,10 @@ export function supabaseBackend(db: SupabaseClient, session: Session): Backend {
     // Each write names only the column it changes, so an upsert never clobbers the other field.
     async setOwned(card_id, owned) {
       check(await db.from('ownership').upsert({ user_id, card_id, owned }, { onConflict: 'user_id,card_id' }))
+    },
+    async setOwnedMany(ids, owned) {
+      const rows = ids.map((card_id) => ({ user_id, card_id, owned }))
+      if (rows.length) check(await db.from('ownership').upsert(rows, { onConflict: 'user_id,card_id' }))
     },
     async setPaid(card_id, paid_usd) {
       check(await db.from('ownership').upsert({ user_id, card_id, paid_usd }, { onConflict: 'user_id,card_id' }))
